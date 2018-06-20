@@ -80,6 +80,7 @@ namespace XVI.AniLipSync {
 
             // 音素の重みが小さすぎる場合は口を閉じる
             if (maxVisemeWeight * 100.0f < weightThreashold) {
+                transitionTimer = 0.0f;
                 return;
             }
 
