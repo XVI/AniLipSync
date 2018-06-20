@@ -51,6 +51,8 @@ namespace XVI.AniLipSync {
                 return;
             }
 
+            transitionTimer += Time.deltaTime;
+
             // 設定したフレームレートへUpdate関数を低下させる
             frameRateTimer += Time.deltaTime;
             if (frameRateTimer < 1.0f / frameRate) {
@@ -88,8 +90,6 @@ namespace XVI.AniLipSync {
             if (previousViseme != (OVRLipSync.Viseme)maxVisemeIndex) {
                 transitionTimer = 0.0f;
                 previousViseme = (OVRLipSync.Viseme)maxVisemeIndex;
-            } else {
-                transitionTimer += Time.deltaTime;
             }
 
             var visemeIndex = maxVisemeIndex - (int)OVRLipSync.Viseme.aa;
