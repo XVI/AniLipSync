@@ -3,7 +3,7 @@ OVRLipSyncをベースに、リミテッドアニメっぽいリップシンク�
 
 # 動作検証済みの環境
 - Windows 10 Version 1709 Build 16299.371
-- OVRLipSync Version 1.25.0
+- OVRLipSync Version 1.28.0
 - Unity 2018.1.0f2
 
 # サンプル
