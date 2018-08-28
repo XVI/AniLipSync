@@ -30,7 +30,7 @@ namespace XVI.AniLipSync {
                     Array.Copy(microphoneBuffer, head, processBuffer, 0, processBuffer.Length);
                 }
 
-                OVRLipSync.ProcessFrame(Context, processBuffer, OVRLipSync.Flags.None, Frame);
+                OVRLipSync.ProcessFrame(Context, processBuffer, Frame);
 
                 head += processBuffer.Length;
                 if (head > microphoneBuffer.Length) {
