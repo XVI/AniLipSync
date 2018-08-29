@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace XVI.AniLipSync {
     public class LowLatencyLipSyncContext : OVRLipSyncContextBase {
+        [Header("mic gain control")]
+        [SerializeField] private float gain = 1.0f;
+
         AudioClip clip;
         int head = 0;
         const int samplingFrequency = 48000;
@@ -24,10 +27,16 @@ namespace XVI.AniLipSync {
             while (GetDataLength(microphoneBuffer.Length, head, position) > processBuffer.Length) {
                 var remain = microphoneBuffer.Length - head;
                 if (remain < processBuffer.Length) {
-                    Array.Copy(microphoneBuffer, head, processBuffer, 0, remain);
-                    Array.Copy(microphoneBuffer, 0, processBuffer, remain, processBuffer.Length - remain);
+                    for (int i = 0; i < remain; i++) {
+                        processBuffer[i] = microphoneBuffer[head + i] * gain;
+                    }
+                    for (int i = remain; i < processBuffer.Length - remain; i++) {
+                        processBuffer[i] = microphoneBuffer[i - remain] * gain;
+                    }
                 } else {
-                    Array.Copy(microphoneBuffer, head, processBuffer, 0, processBuffer.Length);
+                    for (int i = 0; i < processBuffer.Length; i++) {
+                        processBuffer[i] = microphoneBuffer[i] * gain;
+                    }
                 }
 
                 OVRLipSync.ProcessFrame(Context, processBuffer, Frame);
