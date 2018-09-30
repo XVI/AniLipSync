@@ -7,7 +7,7 @@ OVRLipSyncをベースに、リミテッドアニメっぽいリップシンク�
 - Unity 2018.1.0f2
 
 # サンプル
-`Assets/Examples/Scenes/AniLipSync.unity` にサンプルシーンがあります。マイクでしゃべると唇のモデルがリップシンクで動きます。
+`Assets/AniLipSync/Examples/Scenes/AniLipSync.unity` にサンプルシーンがあります。マイクでしゃべると唇のモデルがリップシンクで動きます。
 
 実行前に[OVRLipSync](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/)のインポートが必要です。
 
