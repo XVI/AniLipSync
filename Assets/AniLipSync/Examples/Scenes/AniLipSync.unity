@@ -157,6 +157,16 @@ Prefab:
       propertyPath: skinnedMeshRenderer
       value: 
       objectReference: {fileID: 1114194313}
+    - target: {fileID: 114556892205327254, guid: 7244be351a52e2641ac583ccf5c32780,
+        type: 2}
+      propertyPath: provider
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114343669779808818, guid: 7244be351a52e2641ac583ccf5c32780,
+        type: 2}
+      propertyPath: smoothAmount
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7244be351a52e2641ac583ccf5c32780, type: 2}
   m_IsPrefabParent: 0
