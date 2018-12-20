@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace XVI.AniLipSync {
     public class LowLatencyLipSyncContext : OVRLipSyncContextBase {
-        [Header("mic gain control")]
+        [Tooltip("Microphone input gain. (Amplitude ratio, no unit.)")]
         [SerializeField] private float gain = 1.0f;
 
         AudioClip clip;
