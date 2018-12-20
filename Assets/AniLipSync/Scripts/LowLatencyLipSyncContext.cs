@@ -35,7 +35,7 @@ namespace XVI.AniLipSync {
                     }
                 } else {
                     for (int i = 0; i < processBuffer.Length; i++) {
-                        processBuffer[i] = microphoneBuffer[i] * gain;
+                        processBuffer[i] = microphoneBuffer[head + i] * gain;
                     }
                 }
 
