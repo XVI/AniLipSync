@@ -20,9 +20,6 @@ namespace XVI.AniLipSync {
         [Tooltip("aa, E, ih, oh, ouの順で割り当てるBlendShapeのindex")]
         public int[] visemeToBlendShape = new int[5];
 
-        [Tooltip("OVRLipSyncに渡すSmoothing amountの値")]
-        public int smoothAmount = 100;
-
         OVRLipSyncContextBase context;
         OVRLipSync.Viseme previousViseme = OVRLipSync.Viseme.sil;
         float transitionTimer = 0.0f;
@@ -37,8 +34,6 @@ namespace XVI.AniLipSync {
             if (context == null) {
                 Debug.LogError("同じGameObjectにOVRLipSyncContextBaseを継承したクラスが見つかりません。", this);
             }
-
-            context.Smoothing = smoothAmount;
         }
 
         void Update() {
