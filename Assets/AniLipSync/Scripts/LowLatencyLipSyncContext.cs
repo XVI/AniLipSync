@@ -1,10 +1,17 @@
 ﻿using System;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace XVI.AniLipSync {
     public class LowLatencyLipSyncContext : OVRLipSyncContextBase {
         [Tooltip("Microphone input gain. (Amplitude ratio, no unit.)")]
         [SerializeField] private float gain = 1.0f;
+
+        [HideInInspector] public int deviceIndex = 0;
+
+        [HideInInspector] public string selectedDevice;
 
         AudioClip clip;
         int head = 0;
@@ -14,11 +21,23 @@ namespace XVI.AniLipSync {
         float[] microphoneBuffer = new float[lengthSeconds * samplingFrequency];
 
         void Start() {
-            clip = Microphone.Start(null, true, lengthSeconds, samplingFrequency);
+            if(Microphone.devices.Length != 0)
+            {
+                if(deviceIndex > Microphone.devices.Length || deviceIndex < 0)
+                {
+                    deviceIndex = 0;
+                }
+                selectedDevice = Microphone.devices[deviceIndex];
+                clip = Microphone.Start(selectedDevice, true, lengthSeconds, samplingFrequency);
+            }
+            else
+            {
+                Debug.LogError("Device is not found");
+            }
         }
 
         void Update() {
-            var position = Microphone.GetPosition(null);
+            var position = Microphone.GetPosition(selectedDevice);
             if (position < 0 || head == position) {
                 return;
             }
@@ -66,4 +85,40 @@ namespace XVI.AniLipSync {
             }
         }
     }
+
+    #if UNITY_EDITOR
+
+    [CustomEditor(typeof(LowLatencyLipSyncContext))]
+    public class LowLatencyContextInspector : Editor {
+        LowLatencyLipSyncContext context;
+
+        SerializedProperty indexProperty;
+
+        void OnEnable()
+        {
+            context = (LowLatencyLipSyncContext)target;
+
+            indexProperty = serializedObject.FindProperty("deviceIndex");
+        }
+
+        public override void OnInspectorGUI()
+        {
+            base.OnInspectorGUI();
+
+            serializedObject.Update();
+
+            string[] devices = Microphone.devices;
+            int[] deviceIndexes = new int[devices.Length];
+            for(int i = 0;i < devices.Length;i++)
+            {
+                deviceIndexes[i] = i;
+            }
+
+            indexProperty.intValue = EditorGUILayout.IntPopup(indexProperty.intValue, devices, deviceIndexes);
+
+            serializedObject.ApplyModifiedProperties();
+        }
+    }
+
+    #endif
 }
