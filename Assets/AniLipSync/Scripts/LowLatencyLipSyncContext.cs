@@ -119,6 +119,7 @@ namespace XVI.AniLipSync {
             serializedObject.Update();
 
             string[] devices = Microphone.devices;
+            deviceIndex = Array.IndexOf(devices, deviceProperty.stringValue);
             deviceIndex = EditorGUILayout.Popup(deviceIndex, devices);
 
             // 実行中はSetterを使ってマイク切り替えの処理を呼ぶ
