@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -118,14 +119,22 @@ namespace XVI.AniLipSync {
 
             serializedObject.Update();
 
-            string[] devices = Microphone.devices;
-            deviceIndex = Array.IndexOf(devices, deviceProperty.stringValue);
+            string[] devices = Microphone.devices.Concat(new string[] { "[Default Device]" }).ToArray();
+            if (string.IsNullOrEmpty(deviceProperty.stringValue)) {
+                deviceIndex = devices.Length - 1;
+            } else {
+                deviceIndex = Array.IndexOf(devices, deviceProperty.stringValue);
+            }
 
             // '/'はPopupの区切り文字になってしまうため、UnicodeのSlashに置き換えて表示する
             for (var i = 0; i < devices.Length; i++) {
                 devices[i] = devices[i].Replace('/', '\u2215');
             }
             deviceIndex = EditorGUILayout.Popup(deviceIndex, devices);
+
+            if (deviceIndex >= devices.Length - 1) {
+                deviceIndex = -1;
+            }
 
             // 実行中はSetterを使ってマイク切り替えの処理を呼ぶ
             if(EditorApplication.isPlaying)
@@ -143,6 +152,10 @@ namespace XVI.AniLipSync {
         string GetMicrophoneDevice(int deviceIndex)
         {
             string selectedDevice = null;
+
+            if (deviceIndex < 0) {
+                return null;
+            }
 
             if (Microphone.devices.Length != 0)
             {
