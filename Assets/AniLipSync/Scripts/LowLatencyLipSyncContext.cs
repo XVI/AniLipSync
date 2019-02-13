@@ -120,6 +120,11 @@ namespace XVI.AniLipSync {
 
             string[] devices = Microphone.devices;
             deviceIndex = Array.IndexOf(devices, deviceProperty.stringValue);
+
+            // '/'はPopupの区切り文字になってしまうため、UnicodeのSlashに置き換えて表示する
+            for (var i = 0; i < devices.Length; i++) {
+                devices[i] = devices[i].Replace('/', '\u2215');
+            }
             deviceIndex = EditorGUILayout.Popup(deviceIndex, devices);
 
             // 実行中はSetterを使ってマイク切り替えの処理を呼ぶ
