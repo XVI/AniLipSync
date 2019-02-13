@@ -25,6 +25,8 @@ namespace XVI.AniLipSync {
                 return selectedDevice;
             }
             set {
+                if (Microphone.devices.Length == 0) return;
+
                 Microphone.End(selectedDevice);
                 selectedDevice = value;
                 clip = Microphone.Start(selectedDevice, true, lengthSeconds, samplingFrequency);
@@ -32,14 +34,17 @@ namespace XVI.AniLipSync {
         }
 
         void Start() {
-            if (selectedDevice != null) {
-                clip = Microphone.Start(selectedDevice, true, lengthSeconds, samplingFrequency);
-            } else {
+            if (Microphone.devices.Length == 0) {
                 Debug.LogError("マイクデバイスが存在しません");
+                return;
             }
+
+            clip = Microphone.Start(selectedDevice, true, lengthSeconds, samplingFrequency);
         }
 
         void Update() {
+            if (clip == null) return;
+
             var position = Microphone.GetPosition(selectedDevice);
             if (position < 0 || head == position) {
                 return;
