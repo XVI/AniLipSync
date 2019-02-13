@@ -167,6 +167,11 @@ Prefab:
       propertyPath: smoothAmount
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114556892205327254, guid: 7244be351a52e2641ac583ccf5c32780,
+        type: 2}
+      propertyPath: selectedDevice
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7244be351a52e2641ac583ccf5c32780, type: 2}
   m_IsPrefabParent: 0
