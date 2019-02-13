@@ -8,7 +8,8 @@ using UnityEditor;
 namespace XVI.AniLipSync {
     public class LowLatencyLipSyncContext : OVRLipSyncContextBase {
         [Tooltip("Microphone input gain. (Amplitude ratio, no unit.)")]
-        [SerializeField] private float gain = 1.0f;
+        [SerializeField]
+        float gain = 1.0f;
 
         AudioClip clip;
         int head = 0;
@@ -19,14 +20,11 @@ namespace XVI.AniLipSync {
 
         [SerializeField, HideInInspector]
         string selectedDevice;
-        public string SelectedDevice
-        {
-            get
-            {
+        public string SelectedDevice {
+            get {
                 return selectedDevice;
             }
-            set
-            {
+            set {
                 Microphone.End(selectedDevice);
                 selectedDevice = value;
                 clip = Microphone.Start(selectedDevice, true, lengthSeconds, samplingFrequency);
@@ -34,19 +32,14 @@ namespace XVI.AniLipSync {
         }
 
         void Start() {
-            if (selectedDevice != null)
-            {
+            if (selectedDevice != null) {
                 clip = Microphone.Start(selectedDevice, true, lengthSeconds, samplingFrequency);
-            }
-            else
-            {
+            } else {
                 Debug.LogError("マイクデバイスが存在しません");
             }
         }
 
         void Update() {
-            Debug.Log(selectedDevice);
-
             var position = Microphone.GetPosition(selectedDevice);
             if (position < 0 || head == position) {
                 return;
@@ -97,7 +90,6 @@ namespace XVI.AniLipSync {
     }
 
     #if UNITY_EDITOR
-
     [CustomEditor(typeof(LowLatencyLipSyncContext))]
     public class LowLatencyContextInspector : Editor {
         LowLatencyLipSyncContext context;
@@ -106,15 +98,12 @@ namespace XVI.AniLipSync {
 
         int deviceIndex = 0;
 
-        void OnEnable()
-        {
+        void OnEnable() {
             context = (LowLatencyLipSyncContext)target;
-
             deviceProperty = serializedObject.FindProperty("selectedDevice");
         }
 
-        public override void OnInspectorGUI()
-        {
+        public override void OnInspectorGUI() {
             base.OnInspectorGUI();
 
             serializedObject.Update();
@@ -137,12 +126,9 @@ namespace XVI.AniLipSync {
             }
 
             // 実行中はSetterを使ってマイク切り替えの処理を呼ぶ
-            if(EditorApplication.isPlaying)
-            {
+            if(EditorApplication.isPlaying) {
                 context.SelectedDevice = GetMicrophoneDevice(deviceIndex);
-            }
-            else
-            {
+            } else {
                 deviceProperty.stringValue = GetMicrophoneDevice(deviceIndex);
             }
 
@@ -158,6 +144,5 @@ namespace XVI.AniLipSync {
             return Microphone.devices[deviceIndex];
         }
     }
-
     #endif
 }
