@@ -9,10 +9,6 @@ namespace XVI.AniLipSync {
         [Tooltip("Microphone input gain. (Amplitude ratio, no unit.)")]
         [SerializeField] private float gain = 1.0f;
 
-        [HideInInspector] public int deviceIndex = 0;
-
-        [HideInInspector] public string selectedDevice;
-
         AudioClip clip;
         int head = 0;
         const int samplingFrequency = 48000;
@@ -20,23 +16,36 @@ namespace XVI.AniLipSync {
         float[] processBuffer = new float[1024];
         float[] microphoneBuffer = new float[lengthSeconds * samplingFrequency];
 
-        void Start() {
-            if(Microphone.devices.Length != 0)
+        [SerializeField, HideInInspector]
+        string selectedDevice;
+        public string SelectedDevice
+        {
+            get
             {
-                if(deviceIndex > Microphone.devices.Length || deviceIndex < 0)
-                {
-                    deviceIndex = 0;
-                }
-                selectedDevice = Microphone.devices[deviceIndex];
+                return selectedDevice;
+            }
+            set
+            {
+                Microphone.End(selectedDevice);
+                selectedDevice = value;
+                clip = Microphone.Start(selectedDevice, true, lengthSeconds, samplingFrequency);
+            }
+        }
+
+        void Start() {
+            if (selectedDevice != null)
+            {
                 clip = Microphone.Start(selectedDevice, true, lengthSeconds, samplingFrequency);
             }
             else
             {
-                Debug.LogError("Device is not found");
+                Debug.LogError("マイクデバイスが存在しません");
             }
         }
 
         void Update() {
+            Debug.Log(selectedDevice);
+
             var position = Microphone.GetPosition(selectedDevice);
             if (position < 0 || head == position) {
                 return;
@@ -92,13 +101,15 @@ namespace XVI.AniLipSync {
     public class LowLatencyContextInspector : Editor {
         LowLatencyLipSyncContext context;
 
-        SerializedProperty indexProperty;
+        SerializedProperty deviceProperty;
+
+        int deviceIndex = 0;
 
         void OnEnable()
         {
             context = (LowLatencyLipSyncContext)target;
 
-            indexProperty = serializedObject.FindProperty("deviceIndex");
+            deviceProperty = serializedObject.FindProperty("selectedDevice");
         }
 
         public override void OnInspectorGUI()
@@ -114,9 +125,35 @@ namespace XVI.AniLipSync {
                 deviceIndexes[i] = i;
             }
 
-            indexProperty.intValue = EditorGUILayout.IntPopup(indexProperty.intValue, devices, deviceIndexes);
+            deviceIndex = EditorGUILayout.IntPopup(deviceIndex, devices, deviceIndexes);
+
+            // 実行中はSetterを使ってマイク切り替えの処理を呼ぶ
+            if(EditorApplication.isPlaying)
+            {
+                context.SelectedDevice = GetMicrophoneDevice(deviceIndex);
+            }
+            else
+            {
+                deviceProperty.stringValue = GetMicrophoneDevice(deviceIndex);
+            }
 
             serializedObject.ApplyModifiedProperties();
+        }
+
+        string GetMicrophoneDevice(int deviceIndex)
+        {
+            string selectedDevice = null;
+
+            if (Microphone.devices.Length != 0)
+            {
+                if (deviceIndex > Microphone.devices.Length || deviceIndex < 0)
+                {
+                    deviceIndex = 0;
+                }
+                selectedDevice = Microphone.devices[deviceIndex];
+            }
+
+            return selectedDevice;
         }
     }
 
