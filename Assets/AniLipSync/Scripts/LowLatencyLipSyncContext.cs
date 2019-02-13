@@ -151,22 +151,11 @@ namespace XVI.AniLipSync {
 
         string GetMicrophoneDevice(int deviceIndex)
         {
-            string selectedDevice = null;
+            if (deviceIndex < 0) return null;
+            if (deviceIndex > Microphone.devices.Length) return null;
+            if (Microphone.devices.Length == 0) return null;
 
-            if (deviceIndex < 0) {
-                return null;
-            }
-
-            if (Microphone.devices.Length != 0)
-            {
-                if (deviceIndex > Microphone.devices.Length || deviceIndex < 0)
-                {
-                    deviceIndex = 0;
-                }
-                selectedDevice = Microphone.devices[deviceIndex];
-            }
-
-            return selectedDevice;
+            return Microphone.devices[deviceIndex];
         }
     }
 
