@@ -9,7 +9,7 @@ namespace XVI.AniLipSync {
     public class LowLatencyLipSyncContext : OVRLipSyncContextBase {
         [Tooltip("Microphone input gain. (Amplitude ratio, no unit.)")]
         [SerializeField]
-        float gain = 1.0f;
+        public float gain = 1.0f;
 
         AudioClip clip;
         int head = 0;
@@ -19,17 +19,17 @@ namespace XVI.AniLipSync {
         float[] microphoneBuffer = new float[lengthSeconds * samplingFrequency];
 
         [SerializeField, HideInInspector]
-        string selectedDevice;
-        public string SelectedDevice {
+        string _selectedDevice;
+        public string selectedDevice {
             get {
-                return selectedDevice;
+                return _selectedDevice;
             }
             set {
                 if (Microphone.devices.Length == 0) return;
 
-                Microphone.End(selectedDevice);
-                selectedDevice = value;
-                clip = Microphone.Start(selectedDevice, true, lengthSeconds, samplingFrequency);
+                Microphone.End(_selectedDevice);
+                _selectedDevice = value;
+                clip = Microphone.Start(_selectedDevice, true, lengthSeconds, samplingFrequency);
             }
         }
 
@@ -105,7 +105,7 @@ namespace XVI.AniLipSync {
 
         void OnEnable() {
             context = (LowLatencyLipSyncContext)target;
-            deviceProperty = serializedObject.FindProperty("selectedDevice");
+            deviceProperty = serializedObject.FindProperty("_selectedDevice");
         }
 
         public override void OnInspectorGUI() {
@@ -132,7 +132,7 @@ namespace XVI.AniLipSync {
 
             // 実行中はSetterを使ってマイク切り替えの処理を呼ぶ
             if(EditorApplication.isPlaying) {
-                context.SelectedDevice = GetMicrophoneDevice(deviceIndex);
+                context.selectedDevice = GetMicrophoneDevice(deviceIndex);
             } else {
                 deviceProperty.stringValue = GetMicrophoneDevice(deviceIndex);
             }
