@@ -26,6 +26,7 @@ namespace XVI.AniLipSync {
             }
             set {
                 if (Microphone.devices.Length == 0) return;
+                if (_selectedDevice == value) return;
 
                 Microphone.End(_selectedDevice);
                 _selectedDevice = value;
