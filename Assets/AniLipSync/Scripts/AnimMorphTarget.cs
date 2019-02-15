@@ -20,7 +20,11 @@ namespace XVI.AniLipSync {
         [Tooltip("aa, E, ih, oh, ouの順で割り当てるBlendShapeのindex")]
         public int[] visemeToBlendShape = new int[5];
 
+        [Tooltip("長音時、このRMS値（音量）より大きければ口の形を維持する")]
+        public float rmsThreshold = 0.005f;
+
         OVRLipSyncContextBase context;
+        LowLatencyLipSyncContext lowLatencyLipSyncContext;
         OVRLipSync.Viseme previousViseme = OVRLipSync.Viseme.sil;
         float transitionTimer = 0.0f;
         float frameRateTimer = 0.0f;
@@ -34,6 +38,9 @@ namespace XVI.AniLipSync {
             if (context == null) {
                 Debug.LogError("同じGameObjectにOVRLipSyncContextBaseを継承したクラスが見つかりません。", this);
             }
+
+            // LowLatencyLipSyncContext以外でも動くようにしておくこと
+            lowLatencyLipSyncContext = context as LowLatencyLipSyncContext;
         }
 
         void Update() {
@@ -77,6 +84,11 @@ namespace XVI.AniLipSync {
 
             // 音素の重みが小さすぎる場合は、口の形を維持する
             if (maxVisemeWeight * 100.0f < weightThreashold) {
+                maxVisemeIndex = (int)previousViseme;
+            }
+
+            // 長音時に口が閉じてしまわないように、閾値より大きければ前フレームの口の形を維持する
+            if (lowLatencyLipSyncContext != null && maxVisemeIndex == (int)OVRLipSync.Viseme.sil && lowLatencyLipSyncContext.GetMicVolume() > rmsThreshold) {
                 maxVisemeIndex = (int)previousViseme;
             }
 

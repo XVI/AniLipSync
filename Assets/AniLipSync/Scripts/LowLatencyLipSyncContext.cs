@@ -76,13 +76,13 @@ namespace XVI.AniLipSync {
         }
 
         public float GetMicVolume() {
-            float a = 0;
+            float sum = 0;
 
-            foreach (float s in processBuffer) {
-                a += Mathf.Abs(s);
+            foreach (float sample in processBuffer) {
+                sum += Mathf.Pow(sample, 2.0f);
             }
 
-            return a / processBuffer.Length;
+            return Mathf.Sqrt(sum / processBuffer.Length);
         }
 
         static int GetDataLength(int bufferLength, int head, int tail) {
