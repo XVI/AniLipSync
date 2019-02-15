@@ -66,7 +66,7 @@ namespace XVI.AniLipSync {
 
             // 最大の重みを持つ音素を探す
             var maxVisemeIndex = 0;
-            var maxVisemeWeight = 0.0f;
+            var maxVisemeWeight = frame.Visemes[0];
             // 子音は無視する
             for (var i = (int)OVRLipSync.Viseme.aa; i < frame.Visemes.Length; i++) {
                 if (frame.Visemes[i] > maxVisemeWeight) {
@@ -75,16 +75,21 @@ namespace XVI.AniLipSync {
                 }
             }
 
-            // 音素の重みが小さすぎる場合は口を閉じる
+            // 音素の重みが小さすぎる場合は、口の形を維持する
             if (maxVisemeWeight * 100.0f < weightThreashold) {
-                transitionTimer = 0.0f;
-                return;
+                maxVisemeIndex = (int)previousViseme;
             }
 
             // 音素の切り替わりでタイマーをリセットする
             if (previousViseme != (OVRLipSync.Viseme)maxVisemeIndex) {
                 transitionTimer = 0.0f;
                 previousViseme = (OVRLipSync.Viseme)maxVisemeIndex;
+            }
+
+            // 無音の場合はBlendShapeの値は上でリセットしたのでゼロ
+            if (maxVisemeIndex == (int)OVRLipSync.Viseme.sil) {
+                previousViseme = OVRLipSync.Viseme.sil;
+                return;
             }
 
             var visemeIndex = maxVisemeIndex - (int)OVRLipSync.Viseme.aa;
