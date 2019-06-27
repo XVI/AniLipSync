@@ -67,7 +67,7 @@ namespace XVI.AniLipSync {
                     }
                 }
 
-                OVRLipSync.ProcessFrame(Context, processBuffer, Frame, OVRLipSync.AudioDataType.F32_Mono);
+                OVRLipSync.ProcessFrame(Context, processBuffer, Frame, false);
 
                 head += processBuffer.Length;
                 if (head > microphoneBuffer.Length) {
